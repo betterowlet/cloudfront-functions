@@ -32,7 +32,7 @@
             <h2>Headers sent from your browser:</h2>
         <% } %>
 
-        <% Object.entries(headers).forEach(([name, value]) => { %>
+        <% Object.entries(headers).sort(([a], [b]) => a.localeCompare(b)).forEach(([name, value]) => { %>
             <div class="header-item">
                 <span class="header-name"><%= name %>:</span>
                 <span class="header-value"><%= value %></span>

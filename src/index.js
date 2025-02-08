@@ -91,8 +91,12 @@ router.get('/jp', async (ctx) => {
 // API路由：返回请求头信息
 router.get('/api/headers', async (ctx) => {
   ctx.type = 'application/json';
+  // 对请求头按字母顺序排序
+  const sortedHeaders = Object.fromEntries(
+    Object.entries(ctx.headers).sort(([a], [b]) => a.localeCompare(b))
+  );
   ctx.body = {
-    headers: ctx.headers
+    headers: sortedHeaders
   };
 });
 
