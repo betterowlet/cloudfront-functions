@@ -101,6 +101,11 @@ app.use(router.routes()).use(router.allowedMethods());
 
 // 启动服务器
 const port = 3000;
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });
+}
+
+// 重要：需要导出 app 实例
+module.exports = app.callback();
