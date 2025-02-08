@@ -8,8 +8,6 @@ const { Reader } = require('@maxmind/geoip2-node');
 const app = new Koa();
 const router = new Router();
 
-// 配置静态文件服务
-app.use(serve(path.join(__dirname, '../public')));
 
 // 配置EJS模板引擎
 render(app, {
@@ -41,6 +39,24 @@ async function detectLanguage(ctx, next) {
   await next();
 }
 
+// 缓存控制中间件
+app.use(async (ctx, next) => {
+  await next();
+  
+  // 对API请求设置no-cache
+  if (ctx.path.startsWith('/api/')) {
+    ctx.set('Cache-Control', 'no-cache');
+  }
+  // 对静态资源设置较长的缓存时间
+  else if (ctx.path.endsWith('.css') || ctx.path.endsWith('.js') || ctx.path.endsWith('.ico')) {
+    ctx.set('Cache-Control', 'public, max-age=3600, must-revalidate');
+  }
+  // 其他请求使用默认的缓存策略
+  else {
+    ctx.set('Cache-Control', 'public, max-age=30, s-maxage=60, must-revalidate');
+  }
+});
+
 // 应用语言检测中间件
 app.use(detectLanguage);
 
@@ -56,6 +72,10 @@ async function handleLanguage(ctx, currentLang) {
 
   return false;
 }
+
+// 配置静态文件服务
+app.use(serve(path.join(__dirname, '../public')));
+
 
 // 路由处理
 router.get('/', async (ctx) => {
