@@ -9,7 +9,7 @@ const app = new Koa();
 const router = new Router();
 
 // 配置静态文件服务
-app.use(serve(path.join(__dirname, 'views')));
+app.use(serve(path.join(__dirname, '../public')));
 
 // 配置EJS模板引擎
 render(app, {
