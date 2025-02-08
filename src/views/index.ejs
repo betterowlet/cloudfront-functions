@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><% if (lang === 'cn') { %>请求头信息<% } else if (lang === 'jp') { %>リクエストヘッダー情報<% } else { %>Request Headers<% } %></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>
+        <% if (lang === 'cn') { %>
+            请求头信息
+        <% } else if (lang === 'jp') { %>
+            リクエストヘッダー情報
+        <% } else { %>
+            Request Headers
+        <% } %>
+    </h1>
+
+    <div class="language-switcher">
+        <a href="#" onclick="switchLanguage('en'); return false;">English</a>
+        <a href="#" onclick="switchLanguage('cn'); return false;">中文</a>
+        <a href="#" onclick="switchLanguage('jp'); return false;">日本語</a>
+    </div>
+
+    <div class="headers">
+        <% if (lang === 'cn') { %>
+            <h2>您的浏览器发送的请求头：</h2>
+        <% } else if (lang === 'jp') { %>
+            <h2>ブラウザから送信されたヘッダー：</h2>
+        <% } else { %>
+            <h2>Headers sent from your browser:</h2>
+        <% } %>
+
+        <% Object.entries(headers).forEach(([name, value]) => { %>
+            <div class="header-item">
+                <span class="header-name"><%= name %>:</span>
+                <span class="header-value"><%= value %></span>
+            </div>
+        <% }); %>
+    </div>
+
+    <script>
+    function switchLanguage(lang) {
+        // 设置cookie，30天过期
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 30);
+        document.cookie = `lang=${lang};expires=${expiryDate.toUTCString()};path=/`;
+
+        // 更新页面URL并重新加载
+        window.location.href = lang === 'en' ? '/' : `/${lang}`;
+    }
+    </script>
+</body>
+</html>
