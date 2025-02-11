@@ -39,6 +39,23 @@ async function detectLanguage(ctx, next) {
   await next();
 }
 
+// CloudFront 请求头处理中间件
+app.use(async (ctx, next) => {
+  // 处理 CloudFront 转发的请求
+  const cfIP = ctx.get('x-forwarded-for');
+  if (cfIP) {
+    ctx.ip = cfIP.split(',')[0].trim();
+  }
+  
+  // 处理 CloudFront 的自定义请求头
+  const cfHost = ctx.get('x-forwarded-host');
+  if (cfHost) {
+    ctx.host = cfHost;
+  }
+
+  await next();
+});
+
 // 缓存控制中间件
 app.use(async (ctx, next) => {
   await next();
@@ -75,7 +92,6 @@ async function handleLanguage(ctx, currentLang) {
 
 // 配置静态文件服务
 app.use(serve(path.join(__dirname, '../public')));
-
 
 // 路由处理
 router.get('/', async (ctx) => {
